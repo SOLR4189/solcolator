@@ -6,7 +6,7 @@ import java.util.Date;
 
 /**
  * Helper class for working with file and directories
- * @author Chiko
+ * @author Nickolay
  *
  */
 public class FileUtils {
