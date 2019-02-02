@@ -5,5 +5,12 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.7.jar"/>
 	<classpathentry kind="lib" path="lib/solr-core-6.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/solr-solrj-6.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/luwak-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-analyzers-common-6.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-6.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-memory-6.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-queries-6.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-queryparser-6.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-sandbox-6.5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
