@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import solcolator.common.SolrUtils;
 import solcolator.io.api.SolcolatorQuery;
 import solcolator.luwak.LuwakQueriesManager;
 import solcolator.luwak.LuwakQuery;
-import solcolator.solcolator.common.SolrUtils;
 
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;

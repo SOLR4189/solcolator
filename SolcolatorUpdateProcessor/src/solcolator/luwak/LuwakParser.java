@@ -28,7 +28,7 @@ import org.apache.solr.servlet.SolrRequestParsers;
 import com.google.common.base.Charsets;
 import com.google.common.net.UrlEscapers;
 
-import solcolator.solcolator.common.SolrUtils;
+import solcolator.common.SolrUtils;
 import uk.co.flax.luwak.MonitorQueryParser;
 
 public class LuwakParser implements MonitorQueryParser {
@@ -63,7 +63,7 @@ public class LuwakParser implements MonitorQueryParser {
 		SolrParams solrParams = SolrParams.toSolrParams(solrParamsNamedList);	
 		SolrQueryRequest solrRequest = new LocalSolrQueryRequest(core, solrParamsNamedList);
 		
-		if (componentsToParser.size() != 0) {
+		if (componentsToParser != null && componentsToParser.size() != 0) {
 			List<SearchComponent> components = new ArrayList<SearchComponent>();
 			for (String searchComponentName : componentsToParser) {
 				components.add(core.getSearchComponent(searchComponentName));

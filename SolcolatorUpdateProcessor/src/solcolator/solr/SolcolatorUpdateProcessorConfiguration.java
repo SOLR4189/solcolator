@@ -1,16 +1,11 @@
 package solcolator.solr;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import solcolator.config.ConfigField;
 import solcolator.config.ConfigFieldType;
 import solcolator.config.SolrConfigurationInitializationException;
 import solcolator.config.SolrPluginConfigurationBase;
-import solcolator.io.readers.SolcolatorInputKind;
-import solcolator.io.writers.SolcolatorOutputKind;
 import solcolator.luwak.LuwakMatcherFactory;
 
 import org.apache.solr.common.util.NamedList;
@@ -67,7 +62,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SolcolatorUpdateProcessorConfiguration extends SolrPluginConfigurationBase  {
 	private final static Logger log = LoggerFactory.getLogger(SolcolatorUpdateProcessorConfiguration.class);
-	private final static String STR_SEPARATOR = ",";
 	
 	@ConfigField(fieldName = "targetHour", fieldType = ConfigFieldType.INT, isMandatory = true)
 	private int targetHour;
@@ -84,22 +78,14 @@ public class SolcolatorUpdateProcessorConfiguration extends SolrPluginConfigurat
 	@ConfigField(fieldName = "matchFactory", fieldType = ConfigFieldType.STRING, isMandatory = true)
 	private String matchFactoryStr;
 	
-	@ConfigField(fieldName = "percolatorInputKind", fieldType = ConfigFieldType.STRING, isMandatory = true)
-	private String solcolatorInputKindStr;
+	@ConfigField(fieldName = "reader", fieldType = ConfigFieldType.NAMED_LIST, isMandatory = true)
+	private NamedList<?> reader;
 	
-	@ConfigField(fieldName = "inputConfig", fieldType = ConfigFieldType.NAMED_LIST, isMandatory = true)
-	private NamedList<?> inputConfig;
-	
-	@ConfigField(fieldName = "percolatorOutputKind", fieldType = ConfigFieldType.STRING, isMandatory = true)
-	private String solcolatorOutputKindStr;
-	
-	@ConfigField(fieldName = "outputConfig", fieldType = ConfigFieldType.NAMED_LIST, isMandatory = true)
-	private NamedList<?> outputConfig;
+	@ConfigField(fieldName = "writers", fieldType = ConfigFieldType.ARRAY, isMandatory = true)
+	private List<?> writers;
 	
 	private List<String> components;
 	private LuwakMatcherFactory matchFactory;
-	private SolcolatorInputKind solcolatorInputKind;
-	private List<SolcolatorOutputKind> solcolatorOutputKinds;
 	
 	public SolcolatorUpdateProcessorConfiguration(NamedList<?> args) throws SolrConfigurationInitializationException {
 		super(args);
@@ -110,13 +96,6 @@ public class SolcolatorUpdateProcessorConfiguration extends SolrPluginConfigurat
 	public void setAndValidateConfig(NamedList<?> args) {		
 		try {
 			matchFactory = LuwakMatcherFactory.get(matchFactoryStr);
-			solcolatorInputKind = SolcolatorInputKind.get(solcolatorInputKindStr);
-			solcolatorOutputKinds = SolcolatorOutputKind.get(solcolatorOutputKindStr);
-			if (componentsStr == null || componentsStr.isEmpty()) {
-				components = new ArrayList<>(0);
-			} else {
-				components = Arrays.asList(componentsStr.split(STR_SEPARATOR));
-			}
 		} catch(Exception ex) {
 			String errMsg = String.format("Config validation is failed due to %s", ex);
 			log.error(errMsg);
@@ -144,19 +123,11 @@ public class SolcolatorUpdateProcessorConfiguration extends SolrPluginConfigurat
 		return matchFactory;
 	}
 	
-	public SolcolatorInputKind getSolcolatorInputKind() {
-		return solcolatorInputKind;
+	public NamedList<?> getReader() {
+		return this.getNamedListParameter("reader", true);
 	}
 	
-	public List<SolcolatorOutputKind> getSolcolatorOutputKinds() {
-		return solcolatorOutputKinds;
-	}
-	
-	public NamedList<?> getInputConfig() {
-		return this.getNamedListParameter("inputConfig", true);
-	}
-	
-	public NamedList<?> getOutputConfig() {
-		return this.getNamedListParameter("outputConfig", true);
+	public List<?> getWriters() {
+		return this.getArrParameter("writers", true);
 	}
 }

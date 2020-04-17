@@ -6,12 +6,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import solcolator.io.IOFactoryWithoutReflection;
+import solcolator.common.IScheduledTask;
+import solcolator.common.ScheduledTaskExecutor;
+import solcolator.io.IOFactoryWithReflection;
 import solcolator.io.api.ISolcolatorResultsWriter;
 import solcolator.io.api.IQueryReader;
 import solcolator.luwak.LuwakQueriesManager;
-import solcolator.solcolator.common.IScheduledTask;
-import solcolator.solcolator.common.ScheduledTaskExecutor;
 
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;
@@ -42,13 +42,9 @@ public class SolcolatorUpdateProcessorFactory  extends UpdateRequestProcessorFac
 		try {
 			manager = LuwakQueriesManager.getQueriesAndCapsManager();
 			
-			IQueryReader queryReader = IOFactoryWithoutReflection.instance().getQueryReader(config.getSolcolatorInputKind());
-			queryReader.init(config.getInputConfig());
-			
-			List<ISolcolatorResultsWriter> solcolatorResultsWriters = IOFactoryWithoutReflection.instance().getSolcolatorResultsWriters(config.getSolcolatorOutputKinds());
-			for (ISolcolatorResultsWriter solcolatorResultsWriter : solcolatorResultsWriters) {
-				solcolatorResultsWriter.init(config.getOutputConfig());
-			}
+			IOFactoryWithReflection factory = new IOFactoryWithReflection(config.getReader(), config.getWriters());	
+			IQueryReader queryReader = factory.getQueryReader();			
+			List<ISolcolatorResultsWriter> solcolatorResultsWriters = factory.getWriters();
 
 			List<String> componentsToParser = config.getComponents();
 			
