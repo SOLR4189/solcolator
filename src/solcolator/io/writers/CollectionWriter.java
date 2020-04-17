@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
@@ -43,16 +44,19 @@ public class CollectionWriter implements ISolcolatorResultsWriter, AutoCloseable
 	}
 
 	@Override
-	public void writeSolcolatorResults(Map<String, SolrInputDocument> docs) throws IOException {
-		try {
-			solrClient.add(docs.values());
-		} catch (SolrServerException e) {
-			log.error(String.format("Bulk of %d docs failed to index to collection %s@%s due to %s",
-					docs.size(),
-					solrClient.getDefaultCollection(),
-					solrClient.getZkHost(),
-					e));
-		}
+	public void writeSolcolatorResults(Map<String, List<SolrInputDocument>> queriesToDocs) throws IOException {
+		for (Entry<String, List<SolrInputDocument>> queryToDocs : queriesToDocs.entrySet()) {
+			try {
+				solrClient.add(queryToDocs.getValue());
+			} catch (SolrServerException e) {
+				log.error(String.format("Bulk of %d docs of query %s failed to index to collection %s@%s due to %s",
+						queryToDocs.getValue().size(),
+						queryToDocs.getKey(),
+						solrClient.getDefaultCollection(),
+						solrClient.getZkHost(),
+						e));
+			}
+		}			
 	}
 
 	@Override

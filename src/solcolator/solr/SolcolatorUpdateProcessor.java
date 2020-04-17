@@ -116,7 +116,7 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
 	//TODO: To think how to union this function with highlightingMatch
 	private void simpleMach(List<InputDocument> documentsList, DocumentBatch documentBatch) throws IOException {
 		Matches<QueryMatch> matches = monitor.match(documentBatch, ParallelMatcher.factory(execService, SimpleMatcher.FACTORY));
-		Map<String, SolrInputDocument> docsToWrite = new HashMap<>();
+		Map<String, List<SolrInputDocument>> docsToWrite = new HashMap<>();
 		
 		for (ISolcolatorResultsWriter writer : writers) {
 			for (InputDocument doc : documentsList) {
@@ -125,7 +125,15 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
 					try {
 						String queryId = documentMatches.getQueryId();
 						SolrInputDocument docWithSpecificFields = getDocWithSpecificFields(queryId, id, null, writer);
-						docsToWrite.put(queryId, docWithSpecificFields);
+						
+						List<SolrInputDocument> docs = docsToWrite.get(queryId);
+						if (docs == null) {
+							docs = new ArrayList<>();
+							docs.add(docWithSpecificFields);
+							docsToWrite.put(queryId, docs);
+						} else {
+							docs.add(docWithSpecificFields);
+						}
 					} catch (Exception e) {
 						String errMessage = String.format("Failed to write matched results for doc %s due to %s", doc.getId(), e);
 						log.error(errMessage);
@@ -139,7 +147,7 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
 
 	private void highlightingMatch(List<InputDocument> documentsList, DocumentBatch documentBatch) throws IOException {
 		Matches<HighlightsMatch> matches = monitor.match(documentBatch, ParallelMatcher.factory(execService, HighlightingMatcher.FACTORY));
-		Map<String, SolrInputDocument> docsToWrite = new HashMap<>();
+		Map<String, List<SolrInputDocument>> docsToWrite = new HashMap<>();
 		
 		for (ISolcolatorResultsWriter writer : writers) {
 			for (InputDocument doc : documentsList) {
@@ -148,7 +156,15 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
 					try {
 						String queryId = documentMatches.getQueryId();
 						SolrInputDocument docWithSpecificFields = getDocWithSpecificFields(queryId, id, documentMatches.getHits(), writer);
-						docsToWrite.put(queryId, docWithSpecificFields);
+
+						List<SolrInputDocument> docs = docsToWrite.get(queryId);
+						if (docs == null) {
+							docs = new ArrayList<>();
+							docs.add(docWithSpecificFields);
+							docsToWrite.put(queryId, docs);
+						} else {
+							docs.add(docWithSpecificFields);
+						}
 					} catch (Exception e) {
 						String errMessage = String.format("Failed to write matched results for doc %s due to %s", doc.getId(), e);
 						log.error(errMessage);

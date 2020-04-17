@@ -10,7 +10,7 @@ import org.apache.solr.common.util.NamedList;
 public interface ISolcolatorResultsWriter extends AutoCloseable {
 	void init(NamedList<?> outputConfig) throws IOException;
 
-	void writeSolcolatorResults(Map<String, SolrInputDocument> docs) throws IOException;
+	void writeSolcolatorResults(Map<String, List<SolrInputDocument>> docs) throws IOException;
 	
 	List<String> getFl();
 	

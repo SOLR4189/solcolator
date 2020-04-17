@@ -12,6 +12,8 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import solcolator.io.api.ISolcolatorResultsWriter;
 
@@ -36,6 +38,7 @@ import solcolator.io.api.ISolcolatorResultsWriter;
  *
  */
 public class KafkaWriter implements ISolcolatorResultsWriter {
+	private static final Logger log = LoggerFactory.getLogger(KafkaWriter.class);
 	private static final String KAFKA_FL = "kafkaFl";
 	private static final String KAFKA_TOPIC = "topicName";
 	
@@ -61,11 +64,21 @@ public class KafkaWriter implements ISolcolatorResultsWriter {
 	
 	//TODO: change write logic
 	@Override
-	public void writeSolcolatorResults(Map<String, SolrInputDocument> docs) throws IOException {
-		for (Entry<String, SolrInputDocument> doc : docs.entrySet()) {
-			String queueName = topicName == null ? doc.getKey() : topicName;
-			producer.send(new ProducerRecord<String, String>(queueName, doc.getValue().getFieldValue("item_id").toString()));
-		}
+	public void writeSolcolatorResults(Map<String, List<SolrInputDocument>> queriesToDocs) throws IOException {
+		for (Entry<String, List<SolrInputDocument>> queryToDocs : queriesToDocs.entrySet()) {
+			for (SolrInputDocument doc : queryToDocs.getValue()) {
+				String id = doc.getFieldValue("item_id").toString();
+				try {
+					String queueName = topicName == null ? queryToDocs.getKey() : topicName;
+					producer.send(new ProducerRecord<String, String>(queueName, id));
+				} catch (Exception e) {
+					log.error(String.format("Doc with id %s of query %s failed to send to kafka due to %s",
+							id,
+							queryToDocs.getKey(),
+							e));
+				}
+			}
+		}	
 	}
 	
 	@Override

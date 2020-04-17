@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,6 +34,7 @@ import solcolator.percolator.common.FileUtils;
  *
  */
 public class SolcolatorResultsFileWriter implements ISolcolatorResultsWriter, AutoCloseable {
+	private static final Logger log = LoggerFactory.getLogger(SolcolatorResultsFileWriter.class);
 	private static final String FILE_PATH = "filePath";
 	private static final String FILE_FL = "fileFl";
 	private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
@@ -56,9 +59,13 @@ public class SolcolatorResultsFileWriter implements ISolcolatorResultsWriter, Au
 	}
 	
 	@Override
-	public void writeSolcolatorResults(Map<String, SolrInputDocument> docs) throws IOException {
-		bw.append(String.format("%s\n", gson.toJson(docs)));
-		bw.flush();
+	public void writeSolcolatorResults(Map<String, List<SolrInputDocument>> queriesToDocs) {
+		try {
+			bw.append(String.format("%s\n", gson.toJson(queriesToDocs)));
+			bw.flush();
+		} catch (IOException ex) {
+			log.error(String.format("Writing results to file is failed due to %s", ex));
+		}
 	}
 	
 	@Override
