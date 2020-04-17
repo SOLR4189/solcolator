@@ -17,8 +17,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import solcolator.io.api.IQueryReader;
-import solcolator.luwak.LuwakQuery;
-import solcolator.percolator.common.FileUtils;
+import solcolator.io.api.SolcolatorQuery;
+import solcolator.solcolator.common.FileUtils;
 
 /**
  * Query reader from json file
@@ -46,23 +46,23 @@ public class QueryTxtFileReader implements IQueryReader {
 	}
 	
 	@Override
-	public List<LuwakQuery> readAllQueries(Map<String, String> reqHandlerMetadata) throws IOException {
+	public List<SolcolatorQuery> readAllQueries(Map<String, String> reqHandlerMetadata) throws IOException {
 		if (file == null) {
-			return new ArrayList<LuwakQuery>();
+			return new ArrayList<SolcolatorQuery>();
 		}
 		
 		FileQueryObject[] queriesObjects;
-		List<LuwakQuery> solcolatorQueries;
+		List<SolcolatorQuery> solcolatorQueries;
 		String filePath = file.getAbsolutePath();
 		
 		try {
 			String fileContent = new String(Files.readAllBytes(Paths.get(filePath)), Charsets.UTF_8);
 			queriesObjects = gson.fromJson(fileContent, type);
 			
-			solcolatorQueries = new ArrayList<LuwakQuery>(queriesObjects.length);
+			solcolatorQueries = new ArrayList<SolcolatorQuery>(queriesObjects.length);
 			for (int i = 0; i < queriesObjects.length; i++) {
 				FileQueryObject obj = queriesObjects[i];
-				solcolatorQueries.add(new LuwakQuery(obj.query_id, obj.query_name, obj.query, reqHandlerMetadata));
+				solcolatorQueries.add(new SolcolatorQuery(obj.query_id, obj.query_name, obj.query, reqHandlerMetadata));
 			}			
 		} catch (Exception e) {
 			throw new ExceptionInInitializerError(String.format("Failed to read queries from file %s due to %s", filePath, e));
@@ -72,10 +72,10 @@ public class QueryTxtFileReader implements IQueryReader {
 	}
 	
 	@Override
-	public LuwakQuery readByQueryId(String queryId, String queryName, Map<String, String> reqHandlerMetadata) throws IOException {
-		List<LuwakQuery> queries = readAllQueries(reqHandlerMetadata);
+	public SolcolatorQuery readByQueryId(String queryId, String queryName, Map<String, String> reqHandlerMetadata) throws IOException {
+		List<SolcolatorQuery> queries = readAllQueries(reqHandlerMetadata);
 		
-		List<LuwakQuery> foundQueries = queries.stream().filter(x -> x.getId().equals(queryId)).collect(Collectors.toList());
+		List<SolcolatorQuery> foundQueries = queries.stream().filter(x -> x.getQueryId().equals(queryId)).collect(Collectors.toList());
 		
 		if (foundQueries.isEmpty()) {
 			String errMsg = String.format("Query with id %s wasn't found", queryId);

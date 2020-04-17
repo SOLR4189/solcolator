@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import solcolator.io.api.SolcolatorQuery;
 import solcolator.luwak.LuwakQueriesManager;
 import solcolator.luwak.LuwakQuery;
-import solcolator.percolator.common.SolrUtils;
+import solcolator.solcolator.common.SolrUtils;
 
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
@@ -57,9 +58,12 @@ public class SolcolatorQueriesRequestHander extends SolcolatorRequestHandler {
 					String queryName = reqParams.get(QUERY_NAME);			
 					if (!isQueryNameValid(req, rsp, queryName)) { return; }
 					
-					LuwakQuery query = manager.getQueryReader().readByQueryId(queryId, queryName, getRequestHandlerMetadata(req.getCore()));
-					
-					manager.updateQueryInMonitor(query);
+					SolcolatorQuery solcolatorQuery = manager.getQueryReader().readByQueryId(queryId, queryName, getRequestHandlerMetadata(req.getCore()));
+					LuwakQuery luwakQuery = new LuwakQuery(solcolatorQuery.getQueryId(),
+							solcolatorQuery.getQueryName(),
+							solcolatorQuery.getQuery(),
+							solcolatorQuery.getQueryMetadata());
+					manager.updateQueryInMonitor(luwakQuery);
 					break;
 					
 				case DELETE:

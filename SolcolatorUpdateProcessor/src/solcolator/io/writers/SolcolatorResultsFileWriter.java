@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import solcolator.io.api.ISolcolatorResultsWriter;
-import solcolator.percolator.common.FileUtils;
+import solcolator.solcolator.common.FileUtils;
 
 /**
  * This writer is designed to write percolator results to file

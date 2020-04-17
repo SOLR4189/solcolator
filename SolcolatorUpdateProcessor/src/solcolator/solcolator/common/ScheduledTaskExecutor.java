@@ -1,4 +1,4 @@
-package solcolator.percolator.common;
+package solcolator.solcolator.common;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

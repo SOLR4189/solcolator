@@ -10,8 +10,8 @@ import solcolator.io.IOFactoryWithoutReflection;
 import solcolator.io.api.ISolcolatorResultsWriter;
 import solcolator.io.api.IQueryReader;
 import solcolator.luwak.LuwakQueriesManager;
-import solcolator.percolator.common.IScheduledTask;
-import solcolator.percolator.common.ScheduledTaskExecutor;
+import solcolator.solcolator.common.IScheduledTask;
+import solcolator.solcolator.common.ScheduledTaskExecutor;
 
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;

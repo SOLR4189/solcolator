@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import solcolator.io.api.ISolcolatorResultsWriter;
-import solcolator.io.api.SolcolatorQuery;
 import solcolator.io.api.IQueryReader;
 import uk.co.flax.luwak.Monitor;
 import uk.co.flax.luwak.MonitorQueryParser;
@@ -89,16 +88,12 @@ public class LuwakQueriesManager implements AutoCloseable {
 	public void loadQueriesToSolcolator(Map<String, String> reqHandlerMetadata) {	
 		try {
 			long start = System.currentTimeMillis();
-			List<SolcolatorQuery> solcolatorQueries = reader.readAllQueries(reqHandlerMetadata);
+			List<LuwakQuery> solcolatorQueries = reader.readAllQueries(reqHandlerMetadata);
 			
-			for (SolcolatorQuery solcolatorQuery : solcolatorQueries) {
+			for (LuwakQuery solcolatorQuery : solcolatorQueries) {
 				try {
-					LuwakQuery luwakQuery = new LuwakQuery(solcolatorQuery.getQueryId(),
-							solcolatorQuery.getQueryName(),
-							solcolatorQuery.getQuery(),
-							solcolatorQuery.getQueryMetadata());
-					updateQueryInMonitor(luwakQuery);
-					queryIdToLuwakQuery.put(luwakQuery.getId(), luwakQuery);
+					updateQueryInMonitor(solcolatorQuery);
+					queryIdToLuwakQuery.put(solcolatorQuery.getId(), solcolatorQuery);
 				} catch(Exception ex) {
 					// Nothing to do. Solcolator will continue to load queries to monitor
 				}			
