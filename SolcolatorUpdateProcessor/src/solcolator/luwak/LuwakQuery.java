@@ -5,8 +5,7 @@ import java.util.Map;
 import uk.co.flax.luwak.MonitorQuery;
 
 /**
- * The class presents json serializable LUWAK query
- *
+ * The class represents json serializable LUWAK query
  */
 public class LuwakQuery extends MonitorQuery {
 	private final String queryName;

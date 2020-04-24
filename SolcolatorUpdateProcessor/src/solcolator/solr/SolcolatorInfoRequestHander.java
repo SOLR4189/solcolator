@@ -12,8 +12,7 @@ import solcolator.luwak.LuwakQueriesManager;
 import solcolator.luwak.LuwakQuery;
 
 /**
- * The handler for developer/QA/level 1 checking. Checkingsqueries mapping are saved in
- * solcolator
+ * The handler for developer & QA tests. It displays the current state of solcolator, which queries are saved in.
  *
  */
 public class SolcolatorInfoRequestHander extends SearchHandler {

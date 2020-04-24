@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum SolcolatorQueriesRequestCommand {
-	UPDATE,
-	DELETE,
-	REFRESH,
-	REREAD;
+	UPDATE,		// add a new query OR update a existing query
+	DELETE,		// delete query
+	REFRESH,	// refresh queries in Luwak (it is used for dynamic values like 'NOW')
+	REREAD;		// load all queries from the source (file/db/etc..)
 
 	/**
 	 * If given request command exists, function will return its enum value otherwise will return null.

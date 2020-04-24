@@ -18,24 +18,26 @@ import org.slf4j.LoggerFactory;
 import solcolator.io.api.ISolcolatorResultsWriter;
 
 /**
- * This writer is designed to write percolator results to KAFKA queues.
- * Meanwhile this writer writes one item in time
- * Implementation of this writer isn't checked yet
- * Parameters which must be provided: kafka parameters and fields list
+ * NOTE! IT'S A BASIC IMPLEMENTATION ONLY. DON'T USE THIS WRITER IN PRODUCTION ENVIRONMENT WITHOUT ADDITIONAL TESTS!
  * 
- * Config for example:
- 	<str name="bootstrap.servers">server</str>
-	<str name="acks">all</str>
-	<str name="enable.idempotence">true</str>
-	<str name="batch.size">16384</str>
-	<str name="linger.ms">1</str>
-	<str name="buffer.memory">33554432</str>
-	<str name="key.serializer">org.apache.kafka.common.serialization.StringSerializer</str>
-	<str name="value.serializer">org.apache.kafka.common.serialization.StringSerializer</str>
-	<str name="topicName">solr.stt-poc</str>
-	<str name="kafkaFl">item_id,Item_Kind_s</str>
- * @author 
- *
+ * This writer is designed to write solcolator results to KAFKA topics.
+ * Meanwhile this writer writes one item in time
+ * 
+ * Kafka Writer Config:
+ 	<lst>
+		<str name="class">solcolator.io.writers.KafkaWriter</str>
+		<str name="bootstrap.servers">...</str>
+		<str name="acks">...</str>
+		<str name="enable.idempotence">...</str>
+		<str name="batch.size">...</str>
+		<str name="linger.ms">...</str>
+		<str name="buffer.memory">...</str>
+		<str name="key.serializer">...</str>
+		<str name="value.serializer">...</str>
+		<str name="topicName">[topic name: if this value is null, then results will be written into topic with name equals id of matched query for each matched document]</str>
+		<str name="kafkaFl">[comma separated list of fields are separated]</str>
+	</lst>
+ * More about Kafka parameters read here: https://kafka.apache.org/11/javadoc/org/apache/kafka/clients/producer/KafkaProducer.html
  */
 public class KafkaWriter implements ISolcolatorResultsWriter {
 	private static final Logger log = LoggerFactory.getLogger(KafkaWriter.class);
@@ -61,21 +63,23 @@ public class KafkaWriter implements ISolcolatorResultsWriter {
 		producer = new KafkaProducer<>(kafkaProps);
 		Thread.currentThread().setContextClassLoader(classLoader);
 	}
-	
-	//TODO: change write logic
+
 	@Override
 	public void writeSolcolatorResults(Map<String, List<SolrInputDocument>> queriesToDocs) throws IOException {
 		for (Entry<String, List<SolrInputDocument>> queryToDocs : queriesToDocs.entrySet()) {
 			for (SolrInputDocument doc : queryToDocs.getValue()) {
 				String id = doc.getFieldValue("item_id").toString();
 				try {
+					//The main idea here: 
+					// OR write all results to a specific topic (provided in a configuration)
+					// OR if the specific topic isn't provided to write each result to a topic with name equals query id
 					String queueName = topicName == null ? queryToDocs.getKey() : topicName;
 					producer.send(new ProducerRecord<String, String>(queueName, id));
 				} catch (Exception e) {
-					log.error(String.format("Doc with id %s of query %s failed to send to kafka due to %s",
+					log.error(String.format("Doc with id %s of query %s failed to send to kafka",
 							id,
-							queryToDocs.getKey(),
-							e));
+							queryToDocs.getKey()),
+							e);
 				}
 			}
 		}	

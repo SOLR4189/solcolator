@@ -16,13 +16,18 @@ import org.slf4j.LoggerFactory;
 import solcolator.io.api.ISolcolatorResultsWriter;
 
 /**
- * This writer is designed to write percolator results to another SOLR collection
+ * NOTE! IT'S A BASIC IMPLEMENTATION ONLY. DON'T USE THIS WRITER IN PRODUCTION ENVIRONMENT WITHOUT ADDITIONAL TESTS!
+ * 
+ * This writer is designed to write solcolator results to another SOLR collection
  * Parameters which must be provided: zookeepers, collection name and fields list
  * 
- * Config for example:
-    <str name="zookeepers">zootest01:2181,zootest03:2181,zootest04:2181</str>
-	<str name="collectionName">PercolatorTmp</str>
-	<str name="collectionFl">*</str>
+ * Collection Writer Config:
+    <lst>
+		<str name="class">solcolator.io.writers.CollectionWriter</str>
+		<str name="zookeepers">[comma separated list of zookeepers with ports]</str>
+		<str name="collectionName">[collection name]</str>
+		<str name="collectionFl">[comma separated list of fields are separated]</str>
+	</lst>
  *
  */
 public class CollectionWriter implements ISolcolatorResultsWriter, AutoCloseable {
@@ -49,12 +54,12 @@ public class CollectionWriter implements ISolcolatorResultsWriter, AutoCloseable
 			try {
 				solrClient.add(queryToDocs.getValue());
 			} catch (SolrServerException e) {
-				log.error(String.format("Bulk of %d docs of query %s failed to index to collection %s@%s due to %s",
+				log.error(String.format("Bulk of %d docs of query %s failed to index to collection %s@%s",
 						queryToDocs.getValue().size(),
 						queryToDocs.getKey(),
 						solrClient.getDefaultCollection(),
-						solrClient.getZkHost(),
-						e));
+						solrClient.getZkHost()
+						), e);
 			}
 		}			
 	}

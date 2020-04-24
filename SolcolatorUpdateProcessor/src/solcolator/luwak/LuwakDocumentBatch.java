@@ -17,6 +17,12 @@ import org.slf4j.LoggerFactory;
 import uk.co.flax.luwak.DocumentBatch;
 import uk.co.flax.luwak.InputDocument;
 
+/**
+ * This class extends DocumentBatch due to bug that you can see here:
+ * https://github.com/flaxsearch/luwak/issues/171
+ * 
+ * Fix for this issue see in line 59
+ */
 public class LuwakDocumentBatch extends DocumentBatch {
 	private static Logger log = LoggerFactory.getLogger(LuwakDocumentBatch.class);
 	private final Directory directory = new RAMDirectory();
@@ -26,6 +32,9 @@ public class LuwakDocumentBatch extends DocumentBatch {
     public LuwakDocumentBatch(List<InputDocument> docs, Similarity similarity) {
         super(docs, similarity);
         assert docs.size() > 1;
+        //Another issue (#172): docs.get(0).getAnalyzers() will get analyzers of first document only.
+        //In the case where second document has a field that first document doesn't have
+        //It will be a problem - TEMP SOLUTION: see in a file SolrUpdateProcessor.java (function createLuwakDoc)
         IndexWriterConfig iwc = new IndexWriterConfig(docs.get(0).getAnalyzers()).setSimilarity(similarity);
         try (IndexWriter writer = new IndexWriter(directory, iwc)) {
             this.reader = build(writer);
@@ -47,7 +56,7 @@ public class LuwakDocumentBatch extends DocumentBatch {
         }
         
         writer.forceMerge(1);
-        writer.commit();
+        writer.commit();	//[issue #171] without this line ONLY a first segment will read
         LeafReader reader = DirectoryReader.open(directory).leaves().get(0).reader();
 
         assert reader != null;

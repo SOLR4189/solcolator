@@ -40,7 +40,7 @@ public class ScheduledTaskExecutor {
 	}
 
 	private long computeNextDelay(int targetHour, int targetMin, int targetSec) {
-		LocalDateTime localNow = LocalDateTime.now(ZoneId.of("Israel"));
+		LocalDateTime localNow = LocalDateTime.now(ZoneId.of("UTC"));
 		LocalDateTime localNextTarget = localNow.withHour(targetHour).withMinute(targetMin).withSecond(targetSec);
 		
 		if (localNow.compareTo(localNextTarget) > 0) {

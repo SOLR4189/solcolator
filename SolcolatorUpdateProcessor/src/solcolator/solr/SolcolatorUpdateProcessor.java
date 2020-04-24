@@ -73,14 +73,14 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
     @Override
     public void finish() throws IOException {
     	execService.execute(() -> {
-        	matchDocumentsList(luwakDocs);
+        	matchDocumentsList(luwakDocs);	//For good performance LUWAK matching would be run only when all docs in bulk had passed processAdd
         });
     	
     	super.finish();
     }
 
 	private void matchDocumentsList(List<InputDocument> documentsList) {
-		log.info("Start to match docs through percolator");
+		log.info("Start to match docs through solcolator");
 		long start = System.currentTimeMillis();
 		
 		try {
@@ -90,10 +90,9 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
 			
 			log.info(String.format("ParallelMatcher matched %d items in %d ms", documentBatch.getBatchSize(), System.currentTimeMillis() - start));	    	
 		} catch (Exception e) {
-			String errMessage = String.format("Failed to match luwak documents due to %s", e);
-			log.error(errMessage);
+			log.error("Failed to match luwak documents", e);
 		} finally {
-			log.info("Finish to match docs through percolator");
+			log.info("Finish to match docs through solcolator");
 		}
 	}
 
@@ -135,8 +134,8 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
 							docs.add(docWithSpecificFields);
 						}
 					} catch (Exception e) {
-						String errMessage = String.format("Failed to write matched results for doc %s due to %s", doc.getId(), e);
-						log.error(errMessage);
+						String errMessage = String.format("Failed to write matched results for doc %s", doc.getId());
+						log.error(errMessage, e);
 					}
 				}
 			}
@@ -166,8 +165,8 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
 							docs.add(docWithSpecificFields);
 						}
 					} catch (Exception e) {
-						String errMessage = String.format("Failed to write matched results for doc %s due to %s", doc.getId(), e);
-						log.error(errMessage);
+						String errMessage = String.format("Failed to write matched results for doc %s", doc.getId());
+						log.error(errMessage, e);
 					}
 				}
 			}
@@ -225,8 +224,8 @@ public class SolcolatorUpdateProcessor extends UpdateRequestProcessor {
 	    	luwakDocs.add(luwakDoc);
 	    	solrDocs.put(itemId, cmd.getSolrInputDocument());
 	    } catch (Exception e) {
-			String errMessage = String.format("Failed to build luwak document for item_id:%s due to %s", itemId, e);
-			log.error(errMessage);
+			String errMessage = String.format("Failed to build luwak document for item_id:%s", itemId);
+			log.error(errMessage, e);
 		}  
     	
     	super.processAdd(cmd);

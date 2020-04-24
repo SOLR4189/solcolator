@@ -13,52 +13,56 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- 	<processor class="SolrcolatorUpdateProcessorFactory">
-		<!-- Scheduling -->
-		<int name="targetHour">8</int>
-		<int name="targetMin">0</int>
-		<int name="targetSec">0</int>
+<processor class="solcolator.solr.SolcolatorUpdateProcessorFactory">
+	<!-- Scheduling -->
+	<int name="targetHour">[hour]</int>
+	<int name="targetMin">[minute]</int>
+	<int name="targetSec">[second]</int>
+
+	<!-- Components to use -->
+	<str name="components"/>
 	
-		<!-- Components to use -->
-		<str name="components">rewriter</str>
-		
-		<!-- Factories for matching docs -->
-		<str name="matchFactory">simple</str> <!-- simple/highlighting -->
-		
-		<!-- I/O -->
-		<str name="percolatorInputKind">directory</str> <!-- directory -->
-		<str name="percolatorOutputKind">collection,tagger</str> <!-- file/kafka/collection/tagger -->
-		
-		<lst name="inputConfig">
-			<str name="dirPath">C:\\Solrs\\solr-6.5.1\\solr-6.5.1\\example\\cloud\\percolator\\queries</str>
+	<!-- Factories for matching docs -->
+	<str name="matchFactory">simple</str> <!-- simple/highlighting -->
+
+	<lst name="reader">
+		<str name="class">solcolator.io.readers.FileReader</str>
+		<str name="filePath">[full path to file with queries]</str>
+	</lst>
+	
+	<arr name="writers">
+		<!--
+		<lst>
+			<str name="class">solcolator.io.writers.CollectionWriter</str>
+			<str name="zookeepers">[comma separated list of zookeepers with ports]</str>
+			<str name="collectionName">[collection name]</str>
+			<str name="collectionFl">[comma separated list of fields are separated]</str>
 		</lst>
+		-->
 		
-		<lst name="outputConfig">
-			<!-- for file writer -->
-			<str name="filePath">C:\\Solrs\\solr-6.5.1\\solr-6.5.1\\example\\cloud\\percolator\\out\\out.csv</str>
-			<str name="fileFl">item_id,Item_Kind_s</str>
-			
-			<!-- for kafka writer -->
-			<str name="bootstrap.servers">user</str>
-			<str name="acks">all</str>
-			<str name="enable.idempotence">true</str>
-			<str name="batch.size">16384</str>
-			<str name="linger.ms">1</str>
-			<str name="buffer.memory">33554432</str>
-			<str name="key.serializer">org.apache.kafka.common.serialization.StringSerializer</str>
-			<str name="value.serializer">org.apache.kafka.common.serialization.StringSerializer</str>
-			<str name="kafkaFl">item_id,Item_Kind_s</str>
-			
-			<!-- for collection writer -->
-			<str name="zookeepers">zootest01:2181,zootest03:2181,zootest04:2181</str>
-			<str name="collectionName">PercolatorTmp</str>
-			<str name="collectionFl">*</str>
-			
-			<!-- for tagger writer -->
-			<str name="url">http://taglife/Tagger/Bulk</str>
-			<str name="httpFl">item_id,timestamp</str>
+		<!-- About Kafka parameters, read here: https://kafka.apache.org/11/javadoc/org/apache/kafka/clients/producer/KafkaProducer.html
+		<lst>
+			<str name="class">solcolator.io.writers.KafkaWriter</str>
+			<str name="bootstrap.servers">...</str>
+			<str name="acks">...</str>
+			<str name="enable.idempotence">...</str>
+			<str name="batch.size">...</str>
+			<str name="linger.ms">...</str>
+			<str name="buffer.memory">...</str>
+			<str name="key.serializer">...</str>
+			<str name="value.serializer">...</str>
+			<str name="topicName">[topic name: if this value is null, then results will be written into topic with name equals id of matched query for each matched document]</str>
+			<str name="kafkaFl">[comma separated list of fields are separated]</str>
 		</lst>
-	</processor>
+		-->
+		
+		<lst>
+			<str name="class">solcolator.io.writers.FileWriter</str>
+			<str name="filePath">[full file path with results (.txt or .csv)</str>
+			<str name="fileFl">[comma separated list of fields are separated]</str>
+		</lst>
+	</arr>
+</processor>
  */
 public class SolcolatorUpdateProcessorConfiguration extends SolrPluginConfigurationBase  {
 	private final static Logger log = LoggerFactory.getLogger(SolcolatorUpdateProcessorConfiguration.class);
@@ -97,9 +101,10 @@ public class SolcolatorUpdateProcessorConfiguration extends SolrPluginConfigurat
 		try {
 			matchFactory = LuwakMatcherFactory.get(matchFactoryStr);
 		} catch(Exception ex) {
-			String errMsg = String.format("Config validation is failed due to %s", ex);
-			log.error(errMsg);
-			throw new IllegalArgumentException(errMsg);
+			String errMsg = "Config validation is failed";
+			log.error(errMsg, ex);
+			
+			throw new IllegalArgumentException(errMsg, ex);
 		}	
 	}
 	

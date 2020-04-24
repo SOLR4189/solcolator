@@ -6,6 +6,9 @@ import java.util.Map;
 
 import org.apache.solr.common.util.NamedList;
 
+/**
+ * Each queries reader have to implement this interface (see FileReader for example)
+ */
 public interface IQueryReader extends AutoCloseable{
 	void init(NamedList<?> inputConfig) throws IOException;
 	

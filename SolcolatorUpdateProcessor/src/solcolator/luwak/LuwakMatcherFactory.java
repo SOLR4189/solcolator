@@ -2,13 +2,19 @@ package solcolator.luwak;
 
 import java.util.Arrays;
 
+/**
+ * Factories for matching docs:
+ * 		SimpleMatcher (simple) - reports which queries matched the InputDocument
+ * 		HighlightingMatcher (highlighting) - reports which queries matched, with the individual matches for each query
+*/
+
 public enum LuwakMatcherFactory {
 	HIGHLIGHTING,
 	SIMPLE;
 	
 	/**
 	 * If given factory exists, function will return its enum value otherwise will throw exception.
-	 * Function case insensitive to value of kindName
+	 * Function is case insensitive to value of kindName
 	 * @param kindName
 	 * @return enum value of kind name or exception
 	 * @throws Exception 

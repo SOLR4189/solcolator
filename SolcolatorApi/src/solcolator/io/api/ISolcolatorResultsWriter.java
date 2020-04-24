@@ -7,6 +7,9 @@ import java.util.Map;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
 
+/**
+ * Each solcolator results writer have to implement this interface (see FileWriter for example)
+ */
 public interface ISolcolatorResultsWriter extends AutoCloseable {
 	void init(NamedList<?> outputConfig) throws IOException;
 

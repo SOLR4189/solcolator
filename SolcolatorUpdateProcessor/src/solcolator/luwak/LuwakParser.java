@@ -42,7 +42,7 @@ public class LuwakParser implements MonitorQueryParser {
 	
 	//TODO: check if query/fq syntax is wrong (for example, time ranges)
 	/**
-	 * Parse query string with metadata to lucene query. For use SolrRequestParsers.parseQueryString
+	 * Parse query string with metadata to LUCENE query. For use SolrRequestParsers.parseQueryString
 	 * we must get query string where 4 specific characters in query body are replaced to its %xy format
 	 * 	& 	- 	%26
 	 *	+	- 	%2B
@@ -100,7 +100,8 @@ public class LuwakParser implements MonitorQueryParser {
 			    }
 			}
 		}
-
+		
+		// In Solcolator we don't need scoring, so using constant score queries will give us the best query performance
 		return new ConstantScoreQuery(builder.build());
 	}
 }

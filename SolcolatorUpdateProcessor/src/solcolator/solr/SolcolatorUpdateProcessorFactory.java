@@ -30,7 +30,7 @@ public class SolcolatorUpdateProcessorFactory  extends UpdateRequestProcessorFac
 	private SolcolatorUpdateProcessorConfiguration config;
 	private ExecutorService execService = Executors.newCachedThreadPool();
 	private LuwakQueriesManager manager;
-	private ScheduledTaskExecutor scheduledTaskExecutor;
+	private ScheduledTaskExecutor scheduledTaskExecutor; //scheduling queries refresh
 		
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -58,10 +58,10 @@ public class SolcolatorUpdateProcessorFactory  extends UpdateRequestProcessorFac
 				}
 			}, config.getTargetHour(), config.getTargetMin(), config.getTargetSec());
 		} catch (Exception e) {
-			String errMessage = String.format("Creating manager is failed due to %s", e);
-			log.error(errMessage);
+			String errMessage = "Creating manager is failed";
+			log.error(errMessage, e);
 			
-			throw new IllegalArgumentException(errMessage);
+			throw new IllegalArgumentException(errMessage, e);
 		}
 	}
 

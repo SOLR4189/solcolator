@@ -19,8 +19,7 @@ import uk.co.flax.luwak.UpdateException;
 import uk.co.flax.luwak.presearcher.MatchAllPresearcher;
 
 /**
- * Class is responsible for add/update/delete querie
- *
+ * The class is responsible for managing (add/update/delete) queries
  */
 public class LuwakQueriesManager implements AutoCloseable {
 	private final static Object updatedLock = new Object();
@@ -53,7 +52,7 @@ public class LuwakQueriesManager implements AutoCloseable {
 	}
 	
 	/**
-	 * Create Luwak monitor for storing percolator queries
+	 * Create Luwak monitor for storing solcolator queries
 	 * @param core - solr core
 	 * @throws ExceptionInInitializerError
 	 */
@@ -64,22 +63,20 @@ public class LuwakQueriesManager implements AutoCloseable {
 		try {
 			monitor = new Monitor(parser, presearcher);
 		} catch (IOException e) {
-			String errMessage = String.format("Failed to create Monitor due to %s", e);
-			log.error(errMessage);
+			log.error("Failed to create Monitor", e);
 			
 			try {
 				if (monitor != null) {
 					monitor.close();
 				}
 			} catch (IOException ex) {
-				errMessage = String.format("Failed to close Monitor due to %s", ex);
-				log.error(errMessage);
+				log.error("Failed to close Monitor", ex);
 			}
 			
-			throw new ExceptionInInitializerError(errMessage);
+			throw new ExceptionInInitializerError(e);
 		}
 		
-		log.info("Creating monitor in LuwakQueriesManager was created successfully");
+		log.info("LuwakQueriesManager monitor was created successfully");
 	}
 	
 	/**
@@ -106,15 +103,15 @@ public class LuwakQueriesManager implements AutoCloseable {
 			
 			log.info(String.format("Solcolator finished to load %d queries in %s miliseconds", monitor.getQueryCount(), System.currentTimeMillis() - start));
 		} catch (Exception e) {
-			String errMessage = String.format("Failed to load queries to monitor due to %s", e);
-			log.error(errMessage);
+			String errMessage = "Failed to load queries to monitor";
+			log.error(errMessage, e);
 			
-			throw new ExceptionInInitializerError(errMessage);
+			throw new ExceptionInInitializerError(e);
 		}
 	}
 	
 	/**
-	 * Closing all used resources: SolcolatorResultsWriter
+	 * Closing all used resources
 	 */
 	public void close() {
 		try {
@@ -125,7 +122,7 @@ public class LuwakQueriesManager implements AutoCloseable {
 			reader.close();
 			log.info("Manager is closed successfully");
 		} catch (Exception e) {
-			log.error(String.format("Closing writer/reader is failed due to ", e));
+			log.error("Closing writer/reader is failed", e);
 		}
 	}
 	// ============================================================================================ //
@@ -149,7 +146,8 @@ public class LuwakQueriesManager implements AutoCloseable {
 	
 	// ============================================================================================ //	
 	/**
-	 * Update all queries in percolator
+	 * Update all queries in solcolator
+	 * In the case query contains dynamic values like NOW, it will be update
 	 */
 	public void updateAllQueries() {
 		synchronized (updatedLock) {
@@ -159,7 +157,7 @@ public class LuwakQueriesManager implements AutoCloseable {
 				try {
 					monitor.update(query);												// add/update query in monitor
 				} catch (Exception e) {
-					log.error(String.format("Query %s is failed to update due to % s", queryId, e));
+					log.error(String.format("Query %s is failed to update", queryId), e);
 				}
 			});
 			log.info(String.format("Solcolator is finished to update all its queries in %d miliseconds", System.currentTimeMillis() - startTime));
@@ -180,11 +178,13 @@ public class LuwakQueriesManager implements AutoCloseable {
 			} catch (UpdateException e) {
 				String errMessage = String.format("Failed to load query with id %s due to %s", monitorQuery.getId(), LuwakUpdateException.getPrintableErrorString(e.errors));
 				log.error(errMessage);
+				
 				throw new Exception(errMessage);
 			} catch (Exception e) {
-				String errMessage = String.format("Failed to load query with id %s due to %s", monitorQuery.getId(), e);
-				log.error(errMessage);
-				throw new Exception(errMessage);
+				String errMessage = String.format("Failed to load query with id %s", monitorQuery.getId());
+				log.error(errMessage, e);
+				
+				throw new Exception(errMessage, e);
 			}
 		
 			
@@ -195,7 +195,7 @@ public class LuwakQueriesManager implements AutoCloseable {
 	}
 	
 	/**
-	 * Delete solcolator query
+	 * Delete solcolator query bu query id
 	 * @param queryId
 	 * @throws Exception
 	 */
@@ -205,9 +205,10 @@ public class LuwakQueriesManager implements AutoCloseable {
 			try {
 				monitor.deleteById(queryId);
 			} catch (Exception ex) {
-				String errMessage = String.format("Failed to delete query with id %s due to %s", queryId, ex);
-				log.error(errMessage);
-				throw new Exception(errMessage);
+				String errMessage = String.format("Failed to delete query with id %s", queryId);
+				log.error(errMessage, ex);
+				
+				throw new Exception(errMessage, ex);
 			}
 			
 			LuwakQuery query = queryIdToLuwakQuery.remove(queryId);

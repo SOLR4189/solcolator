@@ -29,6 +29,6 @@ public class SolcolatorRequestHandler extends SearchHandler {
 
 	@Override
 	public String getSource() {
-		return "chiko production";
+		return "SOLR4189 production";
 	}
 }

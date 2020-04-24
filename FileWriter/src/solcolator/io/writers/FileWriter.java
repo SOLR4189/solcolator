@@ -21,16 +21,17 @@ import com.google.gson.GsonBuilder;
 import solcolator.io.api.ISolcolatorResultsWriter;
 
 /**
- * This writer is designed to write percolator results to file
- * This writer can be used for testing and integration purposes
- * Parameters which must be provided: file path and fields list
+ * NOTE! IT'S A BASIC IMPLEMENTATION ONLY. DON'T USE THIS WRITER IN PRODUCTION ENVIRONMENT WITHOUT ADDITIONAL TESTS!
  * 
- * Config for example:
- 	<str name="filePath">C:\\Solrs\\solr-6.5.1\\solr-6.5.1\\example\\cloud\\percolator\\out\\out.csv</str>
-	<str name="fileFl">item_id,Item_Kind_s</str>
-			
- * @author 
- *
+ * This writer is designed to write solcolator results to a file
+ * This writer can be used for testing and integration purposes
+ * 
+ * File Writer Config:
+ 	<lst>
+		<str name="class">solcolator.io.writers.FileWriter</str>
+		<str name="filePath">[full file path with results (.txt or .csv)</str>
+		<str name="fileFl">[comma separated list of fields are separated]</str>
+	</lst>
  */
 public class FileWriter implements ISolcolatorResultsWriter, AutoCloseable {
 	private static final Logger log = LoggerFactory.getLogger(FileWriter.class);
@@ -64,7 +65,7 @@ public class FileWriter implements ISolcolatorResultsWriter, AutoCloseable {
 			bw.append(String.format("%s\n", gson.toJson(queriesToDocs)));
 			bw.flush();
 		} catch (IOException ex) {
-			log.error(String.format("Writing results to file is failed due to %s", ex));
+			log.error("Writing results to file is failed", ex);
 		}
 	}
 	

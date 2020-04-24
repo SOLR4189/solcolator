@@ -20,28 +20,39 @@ import solcolator.io.api.IQueryReader;
 import solcolator.io.api.SolcolatorQuery;
 
 /**
+ * NOTE! IT'S A BASIC IMPLEMENTATION ONLY. DON'T USE THIS READER IN PRODUCTION ENVIRONMENT WITHOUT ADDITIONAL TESTS!
+ * 
  * Query reader from json file
- * Config formar for example:
- * <lst name="inputConfig">
- * 	<str name="dirPath">/opt/solr/solcolator</str>
- * </lst>
- *
+ * 
+ * File Reader Config:
+ * <lst name="reader">
+		<str name="class">solcolator.io.readers.FileReader</str>
+		<str name="filePath">[full path to file with queries]</str>
+	</lst>
+ * 
+ * Query file for example:
+ * [
+		{
+			"query_id": "1",
+			"query_name": "test",
+			"query": "q=price:[100 TO 200]"
+		}
+   ]
  */
 public class FileReader implements IQueryReader {
-	public static final String DIR_PATH = "dirPath";
+	public static final String FILE_PATH = "filePath";
 	private final Type type = new TypeToken<FileQueryObject[]>() { }.getType();
 	private final Gson gson = new Gson();
 	private File file;
 	
 	@Override
 	public void init(NamedList<?> inputConfig) {
-		String dirPath = (String) inputConfig.get(DIR_PATH);
+		String filePath = (String) inputConfig.get(FILE_PATH);	
+		file = new File(filePath);
 		
-		if (!FileUtils.dirExist(dirPath)) {
-			throw new IllegalArgumentException(String.format("Directory %s doesn't exist or empty", dirPath));
+		if (!file.exists()) {
+			throw new IllegalArgumentException(String.format("File %s doesn't exist", filePath));
 		}
-				
-		file = FileUtils.getLatestModifiedFileInDir(dirPath);
 	}
 	
 	@Override
