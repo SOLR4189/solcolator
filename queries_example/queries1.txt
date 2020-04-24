@@ -1,0 +1,12 @@
+[
+	{
+		"query_id": "1",
+		"query_name": "test",
+		"query": "q=price:[100 TO 200]"
+	},
+	{
+		"query_id": "2",
+		"query_name": "test2",
+		"query": "q=type:H%26M"
+	}
+]
