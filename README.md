@@ -1,7 +1,4 @@
-# solcolator
-Implementation Saved Searches a la ElasticSearch Percolator
+# Solcolator - implementation Saved Searches a la ElasticSearch Percolator
 
-- Update Processor
-- Update Request Handlers
-- Input readers
-- Output writers
+What is Solcolator
+------------------
