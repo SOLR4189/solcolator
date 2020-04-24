@@ -1108,39 +1108,64 @@
 		<!-- Components to use -->
 		<str name="components"/>
 		
-		<!-- Factories for matching docs -->
+		<!-- Factories for matching docs:
+			SimpleMatcher (simple) - reports which queries matched the InputDocument
+			HighlightingMatcher (highlighting) - reports which queries matched, with the individual matches for each query
+		 -->
 		<str name="matchFactory">simple</str> <!-- simple/highlighting -->
 		
-		<!-- I/O -->
-		<str name="percolatorInputKind">directory</str> <!-- directory -->
-		<str name="percolatorOutputKind">file</str> <!-- file/kafka/collection -->
+		<!--
+		<lst name="reader">
+			<str name="class">solcolator.io.readers.FileReader</str>
+			<str name="filePath">[full path to file with queries]</str>
+		</lst>
+		-->
 		
-		<lst name="inputConfig">
-			<str name="dirPath">C:\\Solrs\\solr-6.5.1\\cloud\\solrcolator\\queries</str>
+		<lst name="reader">
+			<str name="class">solcolator.io.readers.FileReader</str>
+			<str name="filePath">...</str>
 		</lst>
 		
-		<lst name="outputConfig">
-			<!-- for file writer -->
-			<str name="filePath">C:\\Solrs\\solr-6.5.1\\cloud\\solrcolator\\out\\out.csv</str>
-			<str name="fileFl">*</str>
+		<arr name="writers">
+			<!--
+			<lst>
+				<str name="class">solcolator.io.writers.CollectionWriter</str>
+				<str name="zookeepers">[comma separated list of zookeepers with ports]</str>
+				<str name="collectionName">[collection name]</str>
+				<str name="collectionFl">[comma separated list of fields are separated]</str>
+			</lst>
+			-->
 			
-			<!-- for kafka writer -->
-			<str name="bootstrap.servers">kafka.dom:9092</str>
-			<str name="acks">all</str>
-			<str name="enable.idempotence">true</str>
-			<str name="batch.size">16384</str>
-			<str name="linger.ms">1</str>
-			<str name="buffer.memory">33554432</str>
-			<str name="key.serializer">org.apache.kafka.common.serialization.StringSerializer</str>
-			<str name="value.serializer">org.apache.kafka.common.serialization.StringSerializer</str>
-			<str name="topicName">topic_name</str>
-			<str name="kafkaFl">item_id,timestamp</str>
+			<!-- About Kafka parameters, read here: https://kafka.apache.org/11/javadoc/org/apache/kafka/clients/producer/KafkaProducer.html
+			<lst>
+				<str name="class">solcolator.io.writers.KafkaWriter</str>
+				<str name="bootstrap.servers">...</str>
+				<str name="acks">...</str>
+				<str name="enable.idempotence">...</str>
+				<str name="batch.size">...</str>
+				<str name="linger.ms">...</str>
+				<str name="buffer.memory">...</str>
+				<str name="key.serializer">...</str>
+				<str name="value.serializer">...</str>
+				<str name="topicName">[topic name: if this value is null, then results will be written into topic with name equals id of matched query for each matched document]</str>
+				<str name="kafkaFl">[comma separated list of fields are separated]</str>
+			</lst>
+			-->
 			
-			<!-- for collection writer -->
-			<str name="zookeepers">zootest01:2181,zootest03:2181,zootest04:2181</str>
-			<str name="collectionName">Tmp</str>
-			<str name="collectionFl">*</str>
-		</lst>
+			<!--
+			<lst>
+				<str name="class">solcolator.io.writers.FileWriter</str>
+				<str name="filePath">[full file path with results (.txt or .csv)</str>
+				<str name="fileFl">[comma separated list of fields are separated]</str>
+			</lst>
+			-->
+			
+			<lst>
+				<str name="class">solcolator.io.writers.FileWriter</str>
+				<str name="filePath">...</str>
+				<str name="fileFl">*</str>
+			</lst>
+		</arr>
 	</processor>
 
     <processor class="solr.RunUpdateProcessorFactory"/>
