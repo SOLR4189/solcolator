@@ -3,7 +3,11 @@
 What is Solcolator
 ------------------
 
-Solrcolator is a SOLR Update Processor based on the open source Luwak https://github.com/flaxsearch/luwak. Solcolator allows you to define a set of search queries and then monitor a stream of indexing documents for any that might match these queries. All matched documents then can be forwarded for further processing to filesystem, kafka, SOLR collection and etc. 
+Solrcolator is a SOLR Update Processor based on the open source Luwak https://github.com/flaxsearch/luwak. Solcolator allows you to define a set of search queries and then monitor a stream of indexing documents for any that might match these queries. All matched documents then can be forwarded for further processing to filesystem, kafka, SOLR collection and etc. Wrapping Luwak into SOLR Update Processor has many advantages:
+* All indexing documents go through SOLR UP - we can sure that all data went through matching processing
+* Using SOLR built-in fields analyzers (morphology, language detection, etc..)
+* Using SOLR built-in queries parsers (dismax, edismax, etc...)
+* Using SOLR as WebService for queries managing (add/update/delete/reread/refresh)
 
 Get the artifacts
 ------------------
@@ -15,7 +19,8 @@ https://github.com/SOLR4189/solcolator/releases
 Using Solcolator
 ----------------
 
-Can be add like a usual SOLR Update Processor
+Can be add like a usual SOLR Update Processor.
+NOTE: The preferred location of Solcolator UP in an update chain is the last one (or penultimate if you use solr.RunUpdateProcessorFactory for indexing documents to SOLR after Solcolator processing)
 ```
 <processor class="solcolator.solr.SolcolatorUpdateProcessorFactory">
 	<!-- Scheduling -->
@@ -85,7 +90,10 @@ Can be add like a usual SOLR Update Processor
 		</lst>
 	</arr>
 </processor>
+```
 
+Endpoint for queries managing
+```
 <!-- Solcolator endpoints -->
 <requestHandler name="/update_solcolator_queries" class="solcolator.solr.SolcolatorQueriesRequestHander"/>
 <requestHandler name="/update_solcolator_info" class="solcolator.solr.SolcolatorInfoRequestHander"/>
@@ -113,7 +121,7 @@ For example - FileReader (see UP config)
 ```
 
 * Through an endpoint 
-```<requestHandler name="/update_solcolator_queries" class="solcolator.solr.SolcolatorQueriesRequestHander"/>```
+```/update_solcolator_queries```
 
 ```
 For example - FileReader (see UP config)
@@ -126,15 +134,45 @@ Matching documents
 
 Matching documents will be forwarded to selected "storage". It depends on selected writer/s. (see UP config)
 
-Customizing the existing presearchers
+Solcolator status
+------------------
+
+For getting information about all indexed queries you can use an endpoint
+```/update_solcolator_info```
+
+```
+For example
+The query with id equals 3 and name equals mytest will be read from file and will be added to Solcolator on-the-fly
+http://localhost:9001/solr/Solcolator/update_solcolator_info?
+```
+
+
+Customizing the existing components (readers & writers)
 -------------------------------------
 
 Solcolator allows to add custom readers and writers. For now there are one custom reader (FileReader) and three custom writers (FileWriter, KafkaWriter, CollectionWriter). 
 
+Possible architecture
+-------------------------------------
+* For small documents and not massive indexing Solcolator can be a part of a main collection (like an usual UP in solrconfig.xml).
 
+* Otherwise Solcolator should be UP in a secondary collection. In this case Solcolator collection can be optimized (disable caches, disable commits, remove warm queries, remove solr.RunUpdateProcessorFactory and etc...) and MainCollection can't be affected by Solcolator performance.
+									  Kafka
+									 /
+									/
+			   SolcolatorCollection -- FileSystem
+			  /						\
+			 /						 \ DB
+Indexer  ---
+			 \
+			  \
+			   MainCollection
 
-
-
+Future releases
+-------------------------------------
+* New readers and writers (DB reader/writer, for example)
+* Improve highlighting mode (maybe using SOLR highlighting)
+* Search by query (id, name)
 
 
 
