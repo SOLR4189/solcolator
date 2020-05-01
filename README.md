@@ -115,9 +115,21 @@ For example - FileReader (see UP config)
 * Through an endpoint 
 ```<requestHandler name="/update_solcolator_queries" class="solcolator.solr.SolcolatorQueriesRequestHander"/>```
 
+```
+For example - FileReader (see UP config)
+The query with id equals 3 and name equals mytest will be read from file and will be added to Solcolator on-the-fly
+http://localhost:9001/solr/Solcolator/update_solcolator_queries?command=update&queryid=3&queryname=mytest
+```
 
+Matching documents
+------------------
 
+Matching documents will be forwarded to selected "storage". It depends on selected writer/s. (see UP config)
 
+Customizing the existing presearchers
+-------------------------------------
+
+Solcolator allows to add custom readers and writers. For now there are one custom reader (FileReader) and three custom writers (FileWriter, KafkaWriter, CollectionWriter). 
 
 
 
