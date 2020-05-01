@@ -92,7 +92,7 @@ NOTE: The preferred location of Solcolator UP in an update chain is the last one
 </processor>
 ```
 
-Endpoint for queries managing
+Endpoints for queries managing
 ```
 <!-- Solcolator endpoints -->
 <requestHandler name="/update_solcolator_queries" class="solcolator.solr.SolcolatorQueriesRequestHander"/>
@@ -132,7 +132,7 @@ http://localhost:9001/solr/Solcolator/update_solcolator_queries?command=update&q
 Matching documents
 ------------------
 
-Matching documents will be forwarded to selected "storage". It depends on selected writer/s. (see UP config)
+Matched documents will be forwarded to selected "storage". It depends on selected writer/s. (see UP config)
 
 Solcolator status
 ------------------
