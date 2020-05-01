@@ -157,6 +157,7 @@ Possible architecture
 * For small documents and not massive indexing Solcolator can be a part of a main collection (like an usual UP in solrconfig.xml).
 
 * Otherwise Solcolator should be UP in a secondary collection. In this case Solcolator collection can be optimized (disable caches, disable commits, remove warm queries, remove solr.RunUpdateProcessorFactory and etc...) and MainCollection can't be affected by Solcolator performance.
+```
 									  Kafka
 									 /
 									/
@@ -167,6 +168,7 @@ Indexer  ---
 			 \
 			  \
 			   MainCollection
+```
 
 Future releases
 -------------------------------------
