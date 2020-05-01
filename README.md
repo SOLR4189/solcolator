@@ -158,16 +158,16 @@ Possible architecture
 
 * Otherwise Solcolator should be UP in a secondary collection. In this case Solcolator collection can be optimized (disable caches, disable commits, remove warm queries, remove solr.RunUpdateProcessorFactory and etc...) and MainCollection can't be affected by Solcolator performance.
 ```
-									  Kafka
-									 /
-									/
-			   SolcolatorCollection -- FileSystem
-			  /						\
-			 /						 \ DB
-Indexer  ---
-			 \
-			  \
-			   MainCollection
+									Kafka
+									|
+									|
+			SolcolatorCollection ---- FileSystem
+			|  						|
+		    |						| 
+  Indexer ---					    DB
+			|
+			|
+			MainCollection
 ```
 
 Future releases
