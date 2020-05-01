@@ -99,13 +99,13 @@ Endpoints for queries managing
 <requestHandler name="/update_solcolator_info" class="solcolator.solr.SolcolatorInfoRequestHander"/>
 ```
 
-Adding queries
+Managing queries
 --------------
 
-Queries can be added:
+ADD/UPDATE:
 * Through a reader is in solrconfig (on SOLR start)
 ```
-For example - FileReader (see UP config)
+For example if you use FileReader (see UP config)
 [
 	{
 		"query_id": "1",
@@ -124,9 +124,37 @@ For example - FileReader (see UP config)
 ```/update_solcolator_queries```
 
 ```
-For example - FileReader (see UP config)
-The query with id equals 3 and name equals mytest will be read from file and will be added to Solcolator on-the-fly
+
+The query with id equals 3 and name equals mytest will be read from the source storage of queries (file, in the case of FileReader) and will be added to Solcolator on-the-fly
 http://localhost:9001/solr/Solcolator/update_solcolator_queries?command=update&queryid=3&queryname=mytest
+```
+
+DELETE:
+* Through an endpoint 
+```/update_solcolator_queries```
+
+```
+The query with id equals 3 will be deleted from Solcolator, BUT not from the source storage of queries (for example, file in the case of FileReader)
+http://localhost:9001/solr/Solcolator/update_solcolator_queries?command=delete&queryid=3
+```
+
+REFRESH:
+* Through an endpoint 
+```/update_solcolator_queries```
+
+```
+All queries in Solcolator will be updated, BUT won't be re-read from the source storage of queries.
+This command will help in the case, you use dynamic objects in your queries, like 'NOW'
+http://localhost:9001/solr/Solcolator/update_solcolator_queries?command=refresh
+```
+
+REREAD:
+* Through an endpoint 
+```/update_solcolator_queries```
+
+```
+All queries in Solcolator will be updated, and will be re-read from the source storage of queries.
+http://localhost:9001/solr/Solcolator/update_solcolator_queries?command=reread
 ```
 
 Matching documents
@@ -142,7 +170,6 @@ For getting information about all indexed queries you can use an endpoint
 
 ```
 For example
-The query with id equals 3 and name equals mytest will be read from file and will be added to Solcolator on-the-fly
 http://localhost:9001/solr/Solcolator/update_solcolator_info?
 ```
 
@@ -175,6 +202,7 @@ Future releases
 * New readers and writers (DB reader/writer, for example)
 * Improve highlighting mode (maybe using SOLR highlighting)
 * Search by query (id, name)
+* Upgrade LUCENE version to the latest version
 
 
 
