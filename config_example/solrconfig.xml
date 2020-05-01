@@ -1100,7 +1100,7 @@
     <processor class="solr.DistributedUpdateProcessorFactory"/>
 	
 	<processor class="solcolator.solr.SolcolatorUpdateProcessorFactory">
-		<!-- Scheduling -->
+		<!-- Scheduling queries refresh -->
 		<int name="targetHour">8</int>
 		<int name="targetMin">0</int>
 		<int name="targetSec">0</int>

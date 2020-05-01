@@ -33,7 +33,7 @@ public class LuwakQueriesManager implements AutoCloseable {
 	private List<ISolcolatorResultsWriter> writers;
 	private List<String> componentsToParser;
 		
-	public static LuwakQueriesManager getQueriesAndCapsManager() {
+	public static LuwakQueriesManager getQueriesManager() {
 		return manager;
 	}
 	

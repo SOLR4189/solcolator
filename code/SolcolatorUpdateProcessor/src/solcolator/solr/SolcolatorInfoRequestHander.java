@@ -20,7 +20,7 @@ public class SolcolatorInfoRequestHander extends SearchHandler {
 	
 	@Override
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {						
-		LuwakQueriesManager manager = LuwakQueriesManager.getQueriesAndCapsManager();
+		LuwakQueriesManager manager = LuwakQueriesManager.getQueriesManager();
 		Map<String, LuwakQuery> queriesMap = manager.getQueryIdToLuwakQuery();
 		
 		NamedList<Object> nmsLst = new NamedList<Object>();

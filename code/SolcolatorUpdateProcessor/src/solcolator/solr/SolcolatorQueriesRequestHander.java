@@ -38,7 +38,7 @@ public class SolcolatorQueriesRequestHander extends SolcolatorRequestHandler {
 			SolcolatorQueriesRequestCommand reqCommand = SolcolatorQueriesRequestCommand.getIfExists(command);
 			if (!isReqCommandValid(req, rsp, reqCommand)) { return; }
 			
-			LuwakQueriesManager manager = LuwakQueriesManager.getQueriesAndCapsManager();
+			LuwakQueriesManager manager = LuwakQueriesManager.getQueriesManager();
 			
 			switch (reqCommand) {
 				case REFRESH:

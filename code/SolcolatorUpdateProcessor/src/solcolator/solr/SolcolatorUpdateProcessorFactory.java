@@ -40,7 +40,7 @@ public class SolcolatorUpdateProcessorFactory  extends UpdateRequestProcessorFac
 		config = new SolcolatorUpdateProcessorConfiguration(args);
 		
 		try {
-			manager = LuwakQueriesManager.getQueriesAndCapsManager();
+			manager = LuwakQueriesManager.getQueriesManager();
 			
 			IOFactoryWithReflection factory = new IOFactoryWithReflection(config.getReader(), config.getWriters());	
 			IQueryReader queryReader = factory.getQueryReader();			

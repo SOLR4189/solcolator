@@ -3,7 +3,7 @@
 What is Solcolator
 ------------------
 
-Solrcolator is a SOLR Update Processor based on the open source Luwak https://github.com/flaxsearch/luwak. Solcolator allows you to define a set of search queries and then monitor a stream of indexing documents for any that might match these queries. All matched documents then can be forward for further processing to filesystem, kafka, SOLR collection and etc. 
+Solrcolator is a SOLR Update Processor based on the open source Luwak https://github.com/flaxsearch/luwak. Solcolator allows you to define a set of search queries and then monitor a stream of indexing documents for any that might match these queries. All matched documents then can be forwarded for further processing to filesystem, kafka, SOLR collection and etc. 
 
 Get the artifacts
 ------------------
@@ -85,4 +85,49 @@ Can be add like a usual SOLR Update Processor
 		</lst>
 	</arr>
 </processor>
+
+<!-- Solcolator endpoints -->
+<requestHandler name="/update_solcolator_queries" class="solcolator.solr.SolcolatorQueriesRequestHander"/>
+<requestHandler name="/update_solcolator_info" class="solcolator.solr.SolcolatorInfoRequestHander"/>
 ```
+
+Adding queries
+--------------
+
+Queries can be added:
+* Through a reader is in solrconfig (on SOLR start)
+```
+For example - FileReader (see UP config)
+[
+	{
+		"query_id": "1",
+		"query_name": "test",
+		"query": "q=price:[100 TO 200]"
+	},
+	{
+		"query_id": "2",
+		"query_name": "test2",
+		"query": "q=type:H%26M"
+	}
+]
+```
+
+* Through an endpoint 
+```<requestHandler name="/update_solcolator_queries" class="solcolator.solr.SolcolatorQueriesRequestHander"/>```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
